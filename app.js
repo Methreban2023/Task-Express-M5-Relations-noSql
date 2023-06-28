@@ -7,7 +7,9 @@ const notFoundHandler = require("./middleware/notFoundHandler");
 const errorHandler = require("./middleware/errorHandler");
 
 connectDb();
+
 app.use(express.json());
+
 app.use("/api/posts", postsRoutes);
 app.use("/api/authors", authorsRoutes);
 

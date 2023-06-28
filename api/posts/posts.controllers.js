@@ -30,40 +30,43 @@ exports.postsUpdate = async (req, res, next) => {
 
 exports.postsGet = async (req, res, next) => {
   try {
-    const posts = await Post.find().populate("posts");
+    // const posts = await Post.find().populate("author");
+    const posts = await Post.find().populate("tags");
     res.json(posts);
   } catch (error) {
     next(error);
   }
 };
-// exports.tagsGet = async (req, res, next) => {
-//   try {
-//     const tags = await Tag.find().populate("tags");
-//     res.json(tags);
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-// exports.CreateTag = async (req, res, next) => {
-//   try {
-//     const tag = await Tag.create(req.body);
-//     return res.status(201).json(tag);
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-// exports.tagAdd = async (req, res, next) => {
-//   try {
-//     const { tagId } = req.prams;
-//     const tag = await Tag.findById(tagId);
-//     await Post.findByIdAndUpdate(req.post._id, {
-//       $push: { tags: tag._id },
-//     });
+exports.tagsGet = async (req, res, next) => {
+  try {
+    const tags = await Tag.find().populate("posts");
+    res.json(tags);
+  } catch (error) {
+    next(error);
+  }
+};
+exports.createTag = async (req, res, next) => {
+  try {
+    const newTag = await Tag.create(req.body);
+    return res.status(201).json(newTag);
+  } catch (error) {
+    next(error);
+  }
+};
 
-//     await Tag.findByIdAndUpdate(tagId, {
-//       $push: { posts: req.post._id },
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+exports.tagAdd = async (req, res, next) => {
+  try {
+    const { tagId } = req.params;
+    const tag = await Tag.findById(tagId);
+    await Post.findByIdAndUpdate(req.post._id, {
+      $push: { tags: tag._id },
+    });
+
+    await Tag.findByIdAndUpdate(tagId, {
+      $push: { posts: req.post._id },
+    });
+    res.status(204).end();
+  } catch (error) {
+    next(error);
+  }
+};
